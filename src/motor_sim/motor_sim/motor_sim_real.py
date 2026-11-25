@@ -17,7 +17,7 @@ class LagFilter():
         self.max_step = self.max_delta_rpm * PUBLISH_TIME_PERIOD
     def do(self,current, target):
         step = self.alpha * (target - current)
-        step = clamp(step, -self.max_delta_rpm,self.max_delta_rpm)
+        step = clamp(step, -self.max_step,self.max_step)
         return (current + step)
 
 
@@ -25,7 +25,8 @@ class MotorCompute(Node):
     def __init__(self):
         super().__init__('motor_sim_real')
         self.subscription = self.create_subscription(Float32MultiArray,'/motor_sim/motor_target_rpm' , self.listener_callback, 10)
-        self.publisher = self.create_publisher(String, '/motor_sim/telemetry',10)
+        self.publisher_string = self.create_publisher(String, '/motor_sim/telemetry_string',10)
+        self.publisher_data = self.create_publisher(Float32MultiArray, '/motor_sim/telemetry_data',10)
         self.timer = self.create_timer(PUBLISH_TIME_PERIOD,self.timer_callback)
 
         self.l_rpm_target = 0.0
@@ -42,7 +43,11 @@ class MotorCompute(Node):
 
         msg = String()
         msg.data = f"Left RPM : {self.l_rpm_current}, Right RPM : {self.r_rpm_current}"
-        self.publisher.publish(msg)
+        self.publisher_string.publish(msg)
+
+        msg = Float32MultiArray()
+        msg.data = [self.l_rpm_current, self.r_rpm_current]
+        self.publisher_data.publish(msg)
 
     def compute_next_rpm(self):
         self.l_rpm_current = self.lag_filter.do(self.l_rpm_current,self.l_rpm_target)
