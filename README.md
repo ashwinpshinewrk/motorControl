@@ -38,11 +38,13 @@ ros2 launch motor_sim motor_sim.launch.py
 
 In another terminal,
 ```bash
+source install/setup.bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
 In one more terminal,
 ```bash
+source install/setup.bash
 ros2 topic echo /motor_sim/telemetry_string
 ```
 
