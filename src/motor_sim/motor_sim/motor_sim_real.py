@@ -5,13 +5,21 @@ from std_msgs.msg import String, Float32MultiArray # type: ignore
 
 PUBLISH_TIME_PERIOD = 0.02 # 50Hz
 
+def clamp(v,min_v,max_v) -> float:
+    return max(min_v,min(max_v,v))
+
 """Used so that the sudden surge in the rpm wont burn the motor."""
 class LagFilter():
     def __init__(self):
         self.TAU = 1 # reaches to 63 percentage that sec, 95 in thrice that.
         self.alpha = PUBLISH_TIME_PERIOD  / self.TAU
+        self.max_delta_rpm = 10
+        self.max_step = self.max_delta_rpm * PUBLISH_TIME_PERIOD
     def do(self,current, target):
-        return current + self.alpha * (target - current)
+        step = self.alpha * (target - current)
+        step = clamp(step, -self.max_delta_rpm,self.max_delta_rpm)
+        return (current + step)
+
 
 class MotorCompute(Node):
     def __init__(self):
