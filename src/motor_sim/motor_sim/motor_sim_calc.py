@@ -4,6 +4,7 @@ import rclpy # type: ignore
 from rclpy.node import Node # type: ignore
 from geometry_msgs.msg import Twist # type: ignore
 from std_msgs.msg import String, Float32MultiArray # type: ignore
+from math import pi
 
 WHEEL_RADIUS = 0.2 # metre
 WHEEL_BASE_LENGTH = 1.0 # metre
@@ -19,8 +20,8 @@ class CmdListener(Node):
         self.publisher = self.create_publisher(Float32MultiArray, '/motor_sim/motor_target_rpm', 10)
 
         self.publish_timer = self.create_timer(PUBLISH_TIME_PERIOD,self.timer_callback)
-        self.left_rpm = 0
-        self.right_rpm = 0
+        self.left_rpm = 0.0
+        self.right_rpm = 0.0
 
     def timer_callback(self):
         msg = Float32MultiArray()
@@ -45,7 +46,7 @@ class CmdListener(Node):
         return (v_l,v_r)
     def convert_velocity_to_rpm(self,v : float) -> float:
         # 60 / 2pi
-        return clamp(v * (60 / (6.28)),-MAX_MOTOR_RPM,MAX_MOTOR_RPM)
+        return clamp(v * (60 / (pi * 2)),-MAX_MOTOR_RPM,MAX_MOTOR_RPM)
 
 
 def main(args=None):
@@ -58,4 +59,5 @@ def main(args=None):
     cmd_listener.destroy_node()
     rclpy.shutdown()
 
-main()
+if __name__ == '__main__':
+    main()

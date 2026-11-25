@@ -63,4 +63,5 @@ def main(args=None):
     motor_compute.destroy_node()
     rclpy.shutdown()
 
-main()
+if __name__=='__main__':
+    main()
