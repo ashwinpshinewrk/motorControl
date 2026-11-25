@@ -9,6 +9,9 @@ WHEEL_RADIUS = 0.2 # metre
 WHEEL_BASE_LENGTH = 1 # metre
 MAX_MOTOR_RPM = 50
 
+def clamp(v,min_v,max_v) -> float:
+    return max(min_v,min(max_v,v))
+
 class CmdListener(Node):
     def __init__(self):
         super().__init__('cmd_listener')
@@ -19,8 +22,8 @@ class CmdListener(Node):
         self.get_logger().info(f"Linear :  {msg.linear} , Angular : {msg.angular}")
         v_l, v_r = self.angular_velocity(msg)
         self.get_logger().info(f"Left wheel veloctiy : {v_l} , right : {v_r}")
-        l_rpm = clamp(self.convert_velocity_to_rpm(v_l))
-        r_rpm = self.convert_velocity_to_rpm(v_r)
+        l_rpm = clamp(self.convert_velocity_to_rpm(v_l),-MAX_MOTOR_RPM,MAX_MOTOR_RPM)
+        r_rpm = clamp(self.convert_velocity_to_rpm(v_r),-MAX_MOTOR_RPM,MAX_MOTOR_RPM)
         self.get_logger().info(f"Left rpm {l_rpm} , Right rpm : {r_rpm}")
     def angular_velocity(self,msg) -> tuple[float, float]:
         linear_v = msg.linear.x # type: ignore
