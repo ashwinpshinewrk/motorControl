@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-                'motor_sim = motor_sim.motor_sim:main'
+                'motor_sim_calc = motor_sim.motor_sim_calc:main',
+                'motor_sim_real = motor_sim.motor_sim_real:main'
         ],
     },
 )
