@@ -1,5 +1,6 @@
 from setuptools import find_packages, setup
-
+import os
+from glob import glob
 package_name = 'motor_sim'
 
 setup(
@@ -10,6 +11,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share',package_name,'launch'),glob('launch/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,8 +26,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-                'motor_sim_calc = motor_sim.motor_sim_calc:main',
-                'motor_sim_real = motor_sim.motor_sim_real:main'
+                'motor_calc = motor_sim.motor_sim_calc:main',
+                'motor_real_world = motor_sim.motor_sim_real:main'
         ],
     },
 )
